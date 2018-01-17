@@ -102,7 +102,7 @@ func (t *TCPNetwork) Connect(addr string) (*Connection, error) {
 	}
 
 	connection := t.createConn(conn)
-	connection.from = 1
+	connection.from = kClientConn
 	connection.run()
 	connection.init()
 

@@ -12,7 +12,7 @@ import (
 
 	"sync/atomic"
 
-	"github.com/sryanyuan/tcpnetwork"
+	"github.com/Frank-gh/tcpnetwork"
 )
 
 var (
