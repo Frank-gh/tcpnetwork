@@ -335,7 +335,7 @@ func (c *Connection) routineMain() {
 		e := recover()
 		if e != nil {
 			glog.Error("Read routine panic %v, stack:", e)
-			//stackInfo := debug.Stack()
+			stackInfo := debug.Stack()
 			glog.Error(string(stackInfo))
 		}
 
