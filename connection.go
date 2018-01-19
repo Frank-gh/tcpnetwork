@@ -9,6 +9,7 @@ import (
 
 	"runtime/debug"
 
+	"github.com/golang/glog"
 	"github.com/golang/protobuf/proto"
 )
 
@@ -265,7 +266,7 @@ func (c *Connection) sendRaw(task *sendTask) error {
 	case <-time.After(time.Duration(c.sendTimeoutSec) * time.Second):
 		{
 			// Timeout, close the connection
-			logError("Send to peer %s timeout, close connection", c.GetRemoteAddress())
+			glog.Error("Send to peer %s timeout, close connection", c.GetRemoteAddress())
 			c.close()
 			return ErrConnSendTimeout
 		}
@@ -333,13 +334,13 @@ func (c *Connection) routineMain() {
 		// Routine end
 		e := recover()
 		if e != nil {
-			logFatal("Read routine panic %v, stack:", e)
-			stackInfo := debug.Stack()
-			logFatal(string(stackInfo))
+			glog.Error("Read routine panic %v, stack:", e)
+			//stackInfo := debug.Stack()
+			glog.Error(string(stackInfo))
 		}
 
 		// Close the connection
-		logWarn("Read routine %s closed", c.GetRemoteAddress())
+		glog.Warning("Read routine %s closed", c.GetRemoteAddress())
 		c.close()
 
 		// Free channel
@@ -362,7 +363,7 @@ func (c *Connection) routineMain() {
 	go c.routineSend()
 	err := c.routineRead()
 	if nil != err {
-		logError("Read routine quit with error %v", err)
+		//glog.Error("Read routine quit with error %v", err)
 	}
 }
 
@@ -371,14 +372,14 @@ func (c *Connection) routineSend() error {
 
 	defer func() {
 		if nil != err {
-			logError("Send routine quit with error %v", err)
+			glog.Error("Send routine quit with error %v", err)
 		}
 		e := recover()
 		if nil != e {
 			//	panic
-			logFatal("Send routine panic %v, stack:", e)
+			glog.Error("Send routine panic %v, stack:", e)
 			stackInfo := debug.Stack()
-			logFatal(string(stackInfo))
+			glog.Error(string(stackInfo))
 		}
 	}()
 
@@ -481,7 +482,7 @@ func (c *Connection) unpack(buf []byte) ([]byte, error) {
 	}
 	if packetLength == c.streamProtocol.GetHeaderLength() {
 		// Empty stream ?
-		logFatal("Invalid stream length equal to header length")
+		glog.Error("Invalid stream length equal to header length")
 		return nil, nil
 	}
 
